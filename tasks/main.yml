@@ -27,7 +27,7 @@
     path: /etc/default/grub
     regexp: '^GRUB_CMDLINE_LINUX='
     line: 'GRUB_CMDLINE_LINUX="rootdelay=300 console=ttyS0 earlyprintk=ttyS0 net.ifnames=0"'
-    register: ansible_cloud_linux_images_register_grub_cmdline
+  register: ansible_cloud_linux_images_register_grub_cmdline
 
 - name: update grub settings
   shell: grub2-mkconfig -o /boot/grub2/grub.cfg
@@ -38,7 +38,7 @@
     path: /etc/dracut.conf
     regexp: '^#add_drivers+='
     line: 'add_drivers+="hv_vmbus hv_netvsc hv_storvsc"'
-    register: ansible_cloud_linux_images_register_dracut
+  register: ansible_cloud_linux_images_register_dracut
 
 - name: rebuild initramfs
   shell: dracut -f -v
