@@ -61,7 +61,7 @@
     regexp: '^PasswordAuthentication'
     line: 'PasswordAuthentication yes'
   notify:
-     - 'check sshd config and restart'
+     - 'restart sshd'
   
 - name: configure sshd clientaliveinterval
   lineinfile:
@@ -69,7 +69,7 @@
     regexp: '^#ClientAliveInterval'
     line: 'ClientAliveInterval 180'
   notify:
-     - 'check sshd config and restart'
+     - 'restart sshd'
 
 - name: install azure linux agent
   package:

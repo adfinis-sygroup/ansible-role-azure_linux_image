@@ -1,11 +1,6 @@
 ---
 
-- name: check sshd config and restart
-  command: '/usr/sbin/sshd -t'
-  notify:
-    - 'ssh restart daemon'
-
-- name: restart daemon
+- name: restart sshd
   service:
     name: sshd
     state: restarted
