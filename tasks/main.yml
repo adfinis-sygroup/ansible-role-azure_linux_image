@@ -61,7 +61,7 @@
     regexp: '^PasswordAuthentication'
     line: 'PasswordAuthentication yes'
   notify:
-     - 'ssh check sshd config and restart'
+     - 'check sshd config and restart'
   
 - name: configure sshd clientaliveinterval
   lineinfile:
