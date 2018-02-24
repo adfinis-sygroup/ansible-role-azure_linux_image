@@ -69,7 +69,7 @@
     regexp: '^#ClientAliveInterval'
     line: 'ClientAliveInterval 180'
   notify:
-     - 'ssh check sshd config and restart'
+     - 'check sshd config and restart'
 
 - name: install azure linux agent
   package:
