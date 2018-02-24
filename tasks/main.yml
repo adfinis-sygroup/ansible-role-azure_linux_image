@@ -1,0 +1,94 @@
+---
+
+- name: configure /etc/sysconfig/network
+  file:
+    src: etc/sysconfig/network
+    dest: /etc/sysconfig/network
+    owner: root
+    group: root
+    mode: 0644
+
+- name: configure /etc/sysconfig-scripts/ifcfg-eth0
+  file:
+    src: etc/sysconfig/network-scripts/ifcfg-eth0
+    dest: /etc/sysconfig/network-scripts/ifcfg-eth0
+    owner: root
+    group: root
+    mode: 0644
+
+- name: enable network service
+  service:
+    name: network
+    enabled: yes
+    state: started
+
+- name: configure grub cmdline options
+  lineinfile:
+    path: /etc/default/grub
+    regexp: '^GRUB_CMDLINE_LINUX='
+    line: 'GRUB_CMDLINE_LINUX="rootdelay=300 console=ttyS0 earlyprintk=ttyS0 net.ifnames=0"'
+    register: ansible_cloud_linux_images_register_grub_cmdline
+
+- name: update grub settings
+  shell: grub2-mkconfig -o /boot/grub2/grub.cfg
+  when: ansible_cloud_linux_images_register_grub_cmdline.changed
+
+- name: configure hyper-v modules in initramfs
+  lineinfile:
+    path: /etc/dracut.conf
+    regexp: '^#add_drivers+='
+    line: 'add_drivers+="hv_vmbus hv_netvsc hv_storvsc"'
+    register: ansible_cloud_linux_images_register_dracut
+
+- name: rebuild initramfs
+  shell: dracut -f -v
+  when: ansible_cloud_linux_images_register_dracut.changed
+
+- name: remove cloud-init
+  package:
+    name: cloud-init
+    state: absent
+
+- name: enable sshd service
+  service:
+    name: sshd
+    enabled: yes
+    state: started
+
+- name: configure sshd passwordauthentication
+  service:
+    path: /etc/ssh/sshd_config
+    regexp: '^PasswordAuthentication'
+    line: 'PasswordAuthentication yes'
+  notify:
+     - 'ssh check sshd config and restart'
+  
+- name: configure sshd clientaliveinterval
+  service:
+    path: /etc/ssh/sshd_config
+    regexp: '^#ClientAliveInterval'
+    line: 'ClientAliveInterval 180'
+  notify:
+     - 'ssh check sshd config and restart'
+
+- name: install azure linux agent
+  package:
+    name: WALinuxAgent
+    state: present
+
+- name: enable azure linux agent service
+  service:
+    name: waagent
+    enabled: yes
+    state: started
+
+- name: configure /etc/waagent.conf
+  file:
+    src: etc/waagent.conf
+    dest: /etc/waagent.conf
+    owner: root
+    group: root
+    mode: 0644
+
+- name: deprovision waagent
+  shell: waagent -force -deprovision
