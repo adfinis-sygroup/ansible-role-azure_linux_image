@@ -56,7 +56,7 @@
     state: started
 
 - name: configure sshd passwordauthentication
-  service:
+  lineinfile:
     path: /etc/ssh/sshd_config
     regexp: '^PasswordAuthentication'
     line: 'PasswordAuthentication yes'
@@ -64,7 +64,7 @@
      - 'ssh check sshd config and restart'
   
 - name: configure sshd clientaliveinterval
-  service:
+  lineinfile:
     path: /etc/ssh/sshd_config
     regexp: '^#ClientAliveInterval'
     line: 'ClientAliveInterval 180'
