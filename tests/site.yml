@@ -1,4 +1,4 @@
 ---
 - hosts: all
   roles:
-    - karras.cloud-linux-images
+    - ansible-cloud-linux-images
