@@ -1,0 +1,18 @@
+---
+
+# azure packages to install
+azure_linux_image_packages:
+  - python-pyasn1
+  - WALinuxAgent
+
+# azure packages to remove
+azure_linux_image_packages_removed:
+  - cloud-init
+
+# azure services to enable and start
+azure_linux_image_agent_services:
+  - waagent
+  - sshd
+
+# azure services to disable and stop
+azure_linux_image_agent_services_disabled: []

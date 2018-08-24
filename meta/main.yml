@@ -3,18 +3,28 @@
 dependencies: []
 
 galaxy_info:
-  author: 'karras'
-  description: 'Ansible role to ensure Linux cloud image requirements'
+  author: 'Adfinis SyGroup AG'
+  description: 'Apply Azure basic requirements to create custom images'
   company: 'Adfinis SyGroup AG'
   license: 'GNU General Public License v3'
-  min_ansible_version: '2.4.0'
+  min_ansible_version: '2.0.0'
   platforms:
+    - name: Debian
+      versions:
+        - wheezy
+        - jessie
+        - stretch
+    - name: Ubuntu
+      versions:
+        - trusty
+        - xenial
+        - bionic
     - name: EL
       versions:
+        - 6
         - 7
   galaxy_tags:
+    - azure
     - image
     - cloud
-    - azure
-    - aws
-    - amazon
+    - template

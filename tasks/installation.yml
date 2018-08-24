@@ -1,0 +1,28 @@
+---
+
+- name: yum clean all
+  command: yum clean metadata                                                   
+  args:                                                                         
+    warn: no                                                                    
+  changed_when: false                                                           
+  failed_when: false                                                            
+  tags:                                                                         
+    - skip_ansible_lint                                                         
+  when: ansible_os_family == 'RedHat'                                           
+
+- name: upgrade all packages
+  yum:
+    name: '*'
+    state: latest
+  when: ansible_os_family == 'RedHat'                                           
+
+- name: install azure image packages
+  package:
+    name: '{{ azure_linux_image_packages }}'
+    state: present
+
+- name: remove interfering software
+  package:
+    name: '{{ azure_linux_image_packages_removed }}'
+    state: absent
+

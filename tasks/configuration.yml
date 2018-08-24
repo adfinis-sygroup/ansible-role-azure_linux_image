@@ -1,0 +1,87 @@
+---
+
+- name: start and enable azure services
+  service:
+    name: '{{ item }}'
+    state: started
+    enabled: true
+  tags:
+    - 'skip_ansible_lint'
+  with_items: '{{ azure_linux_image_agent_services }}'
+
+- name: stop and disable interfering azure services
+  service:
+    name: '{{ item }}'
+    state: stopped
+    enabled: false
+  tags:
+    - 'skip_ansible_lint'
+  with_items: '{{ azure_linux_image_agent_services_disabled }}'
+
+- name: configure /etc/sysconfig/network
+  template:
+    src: etc/sysconfig/network.j2
+    dest: /etc/sysconfig/network
+    owner: root
+    group: root
+    mode: 0644
+    seuser: system_u
+    serole: object_r
+    setype: etc_t
+    selevel: s0
+
+- name: configure /etc/sysconfig/network-scripts/ifcfg-eth0
+  template:
+    src: etc/sysconfig/network-scripts/ifcfg-eth0.j2
+    dest: /etc/sysconfig/network-scripts/ifcfg-eth0
+    owner: root
+    group: root
+    mode: 0644
+    seuser: system_u
+    serole: object_r
+    setype: net_conf_t
+    selevel: s0
+
+- name: configure persistent-net-generator udev rules
+  file:
+    src: /dev/null
+    dest: /etc/udev/rules.d/75-persistent-net-generator.rules
+    state: link
+
+- name: configure grub cmdline options
+  lineinfile:
+    path: /etc/default/grub
+    regexp: '^GRUB_CMDLINE_LINUX='
+    line: 'GRUB_CMDLINE_LINUX="rootdelay=300 console=ttyS0 earlyprintk=ttyS0 net.ifnames=0"'
+  register: azure_linux_image_register_grub_cmdline
+
+- name: update grub settings
+  shell: grub2-mkconfig -o /boot/grub2/grub.cfg
+  when: azure_linux_image_register_grub_cmdline.changed
+
+- name: configure hyper-v modules in initramfs
+  lineinfile:
+    path: /etc/dracut.conf
+    regexp: 'add_drivers+="hv_vmbus hv_netvsc hv_storvsc"'
+    insertafter: '^#add_drivers+='
+    line: 'add_drivers+="hv_vmbus hv_netvsc hv_storvsc"'
+  register: azure_linux_image_register_dracut
+
+- name: rebuild initramfs
+  shell: dracut -f -v
+  when: azure_linux_image_register_dracut.changed
+
+- name: configure /etc/waagent.conf
+  template:
+    src: etc/waagent.conf.j2
+    dest: /etc/waagent.conf
+    owner: root
+    group: root
+    mode: 0644
+    seuser: system_u
+    serole: object_r
+    setype: etc_t
+    selevel: s0
+
+- name: deprovision waagent
+  shell: waagent -force -deprovision
