@@ -3,6 +3,7 @@
 dependencies: []
 
 galaxy_info:
+  role_name: azure_linux_image
   author: 'Adfinis SyGroup AG'
   description: 'Apply Azure basic requirements to create custom images'
   company: 'Adfinis SyGroup AG'
