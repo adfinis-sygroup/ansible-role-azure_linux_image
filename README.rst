@@ -6,7 +6,7 @@ ROLE AZURE LINUX IMAGE
   :target: https://github.com/adfinis-sygroup/ansible-role-azure_linux_image/blob/master/LICENSE
 
 .. image:: https://img.shields.io/travis/adfinis-sygroup/ansible-role-azure_linux_image.svg?style=flat-square
-  :target: https://github.com/adfinis-sygroup/ansible-role-azure_linux_image
+  :target: https://travis-ci.org/adfinis-sygroup/ansible-role-azure_linux_image
 
 .. image:: https://img.shields.io/badge/galaxy-adfinis--sygroup.azure_linux_image-660198.svg?style=flat-square
   :target: https://galaxy.ansible.com/adfinis-sygroup/azure_linux_image
